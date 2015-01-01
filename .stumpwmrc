@@ -2,18 +2,12 @@
 ;;
 (in-package :stumpwm)
 
-;; Need to install swank for Slime evaluation
-;; of StumpWM lisp directly.
+(require 'swank)
+(swank:create-server)
 
-;; (require 'swank)
-;; (swank:create-server)
-
-;; For the moment reloading config is
-;; getting me where I want so far...
-;; ... to be continued
 (setf *data-dir* "~/.stumpwm.d/")
 
-;; Not entirely sure what's going on here, there's no docs.
+;; Need to read the source for stumptray, There's no docs to speak of.
 ;; (add-to-load-path "~/.stumpwm.d/stumptray")
 ;; (load-module "stumptray")
 
@@ -85,13 +79,13 @@ to list all available commands.
 
 ;; Key bindings
 (loop for (key app) in (list
-                        `("e" "emacs")
-                        `("w" "chromium")
-                        `("t" "terminal")
-                        `("l" "loadrc")
-                        `("C-m" "mode-line")
-                        `("C-r" "restart-hard")
-                        `("C-q" "quit"))
+                         `("e"    "emacs")
+                         `("w"    "chromium")
+                         `("t"    "terminal")
+                         `("l"    "loadrc")
+                         `("C-m"  "mode-line")
+                         `("C-r"  "restart-hard")
+                         `("C-q"  "quit"))
       do (define-key *root-map* (kbd key) app))
 
 ;; Message window font
