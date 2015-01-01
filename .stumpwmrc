@@ -11,7 +11,17 @@
 ;; For the moment reloading config is
 ;; getting me where I want so far...
 ;; ... to be continued
-(setf *data-dir* "~/.stumpwm/")
+(setf *data-dir* "~/.stumpwm.d/")
+
+;; Not entirely sure what's going on here, there's no docs.
+;; (add-to-load-path "~/.stumpwm.d/stumptray")
+;; (load-module "stumptray")
+
+(add-to-load-path "~/.stumpwm.d/ttf-fonts")
+(load-module "ttf-fonts")
+
+(add-to-load-path "~/.stumpwm.d/app-menu")
+(load-module "app-menu")
 
 ;; Custom start message
 (setf *startup-message* "
@@ -54,7 +64,6 @@ to list all available commands.
        *window-format*               "<%n%s%m%30t>"
        *screen-mode-line-format*
        (list "[%w] | " '(:eval (run-shell-command local-ip t))))
-(mode-line)
 
 ;; Clear unwanted bindings
 (loop for k in
@@ -86,7 +95,10 @@ to list all available commands.
            (kbd (first app)) (second app)))
 
 ;; Message window font
-(set-font "-xos4-terminus-medium-r-normal--14*")
+;;(set-font "-xos4-terminus-medium-r-normal--14*")
+;; True Type is available, however it's a bit slow.
+;;
+(set-font (make-instance 'xft:font :family "Meslo LG S" :subfamily "Regular" :size 11))
 
 ;; Set the default mouse cursor
 (run-shell-command "xsetroot -cursor_name left_ptr -solid black -name root-window")
