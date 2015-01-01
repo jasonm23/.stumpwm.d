@@ -84,24 +84,23 @@ to list all available commands.
 (defcommand-alias terminal sakura)
 
 ;; Key bindings
-(loop for app in (list `("e"   "emacs")
-                       `("w"   "chromium")
-                       `("t"   "terminal")
-                       `("l"   "loadrc")
-                       `("C-r" "restart-hard")
-                       `("C-q" "quit"))
-      do (define-key
-           *root-map*
-           (kbd (first app)) (second app)))
+(loop for (key app) in (list
+                        `("e" "emacs")
+                        `("w" "chromium")
+                        `("t" "terminal")
+                        `("l" "loadrc")
+                        `("C-m" "mode-line")
+                        `("C-r" "restart-hard")
+                        `("C-q" "quit"))
+      do (define-key *root-map* (kbd key) app))
 
 ;; Message window font
 ;;(set-font "-xos4-terminus-medium-r-normal--14*")
-;; True Type is available, however it's a bit slow.
-;;
-(set-font (make-instance 'xft:font :family "Meslo LG S" :subfamily "Regular" :size 11))
+;; True Type is available, however it's a bit slow
+(set-font (make-instance 'xft:font :family "Meslo LG S" :subfamily "Regular" :size 8))
 
 ;; Set the default mouse cursor
 (run-shell-command "xsetroot -cursor_name left_ptr -solid black -name root-window")
 
 ;; Set the background image (requires feh)
-(run-shell-command "feh --bg-center /home/jason/.stumpwm.d/desktop.jpg")
+(run-shell-command "feh --bg-fill /home/jason/.stumpwm.d/desktop.jpg")
