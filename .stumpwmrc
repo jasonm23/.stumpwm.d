@@ -1,0 +1,95 @@
+;; -*-lisp-*-
+;;
+(in-package :stumpwm)
+
+;; Need to install swank for Slime evaluation
+;; of StumpWM lisp directly.
+
+;; (require 'swank)
+;; (swank:create-server)
+
+;; For the moment reloading config is
+;; getting me where I want so far...
+;; ... to be continued
+(setf *data-dir* "~/.stumpwm/")
+
+;; Custom start message
+(setf *startup-message* "
+   >>> Welcome to StumpWM <<<
+press [Menu Key] [?] for help...
+--------------------------------
+enter [Menu Key] [;] \"commands\"
+to list all available commands.
+--------------------------------
+                           Enjoy
+")
+
+(set-prefix-key           (kbd "Menu"))
+
+; (defparameter ext-ip "dig +short myip.opendns.com @resolver1.opendns.com")
+(set-msg-border-width     1)
+(set-frame-outline-width  1)
+(set-border-color         "#E3C3C0")
+(set-fg-color             "#FFF7D8")
+(set-bg-color             "#010F14")
+(set-win-bg-color         "#010F14")
+(set-focus-color          "#010F14")
+(set-unfocus-color        "black")
+(set-normal-gravity       :bottom)
+
+(defparameter local-ip "ifconfig | grep 'inet ' | head -2 | tail -1 | awk '{print $2}' | sed -e 's/addr://' -e 's/\n//g'")
+
+(setf  *message-window-gravity*      :top
+       *input-window-gravity*        :center
+       *timeout-wait*                5
+       *normal-border-width*         1
+       *mode-line-position*          :bottom
+       *mode-line-border-width*      1
+       *mode-line-background-color*  "#010F14"
+       *mode-line-foreground-color*  "white"
+       *mode-line-pad-x*             3
+       *mode-line-pad-y*             3
+       *mode-line-border-color*      "#0F1410"
+       *mode-line-timeout*           1
+       *window-format*               "<%n%s%m%30t>"
+       *screen-mode-line-format*
+       (list "[%w] | " '(:eval (run-shell-command local-ip t))))
+(mode-line)
+
+;; Clear unwanted bindings
+(loop for k in
+      '("C-a" "C-b" "C-c" "C-e"
+        "C-k" "C-l" "C-m" "C-n"
+        "C-p" "C-u"
+        "c" "e" "w" "t")
+      do (undefine-key *root-map* (kbd k)))
+
+;; App commands
+(defcommand chromium () ()
+  "Run or raise the Chromium browser."
+  (run-or-raise "chromium-browser" '(:class "Chromium")))
+
+(defcommand sakura () ()
+  "Start a sakura terminal session."
+  (run-shell-command "sakura -l"))
+(defcommand-alias terminal sakura)
+
+;; Key bindings
+(loop for app in (list `("e"   "emacs")
+                       `("w"   "chromium")
+                       `("t"   "terminal")
+                       `("l"   "loadrc")
+                       `("C-r" "restart-hard")
+                       `("C-q" "quit"))
+      do (define-key
+           *root-map*
+           (kbd (first app)) (second app)))
+
+;; Message window font
+(set-font "-xos4-terminus-medium-r-normal--14*")
+
+;; Set the default mouse cursor
+(run-shell-command "xsetroot -cursor_name left_ptr -solid black -name root-window")
+
+;; Set the background image (requires feh)
+(run-shell-command "feh --bg-center /home/jason/.stumpwm.d/desktop.jpg")
