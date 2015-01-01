@@ -8,6 +8,8 @@
 (setf *data-dir* "~/.stumpwm.d/")
 
 ;; Need to read the source for stumptray, There's no docs to speak of.
+;; It's a replacement modeline, I doubt this will be necessary.
+;; Look at alternatives for a "status/tray" bar thing...
 ;; (add-to-load-path "~/.stumpwm.d/stumptray")
 ;; (load-module "stumptray")
 
@@ -61,21 +63,25 @@ to list all available commands.
 
 ;; Clear unwanted bindings
 (loop for k in
-      '("C-a" "C-b" "C-c" "C-e"
-        "C-k" "C-l" "C-m" "C-n"
-        "C-p" "C-u"
-        "c" "e" "w" "t")
+     '("C-a" "C-b" "C-c" "C-e" "C-m")
       do (undefine-key *root-map* (kbd k)))
+
+(loop for k in
+     '("C-k" "k" "C-w" "w")
+      do (undefine-key *group-root-map* (kbd k)))
+
+(loop for k in
+     '("C-l" "C-n" "C-p" "C-u" "c" "e" "w" "t" "l")
+      do (undefine-key *tile-group-root-map* (kbd k)))
 
 ;; App commands
 (defcommand chromium () ()
   "Run or raise the Chromium browser."
   (run-or-raise "chromium-browser" '(:class "Chromium")))
 
-(defcommand sakura () ()
-  "Start a sakura terminal session."
+(defcommand terminal () ()
+  "Start a terminal session."
   (run-shell-command "sakura -l"))
-(defcommand-alias terminal sakura)
 
 ;; Key bindings
 (loop for (key app) in (list
