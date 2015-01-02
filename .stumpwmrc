@@ -3,7 +3,7 @@
 (in-package :stumpwm)
 
 (require 'swank)
-(swank:create-server)
+;; (swank:create-server)
 
 (setf *data-dir* "~/.stumpwm.d/")
 
@@ -62,17 +62,30 @@ to list all available commands.
        (list "[%w] | " '(:eval (run-shell-command local-ip t))))
 
 ;; Clear unwanted bindings
-(loop for k in
-     '("C-a" "C-b" "C-c" "C-e" "C-m")
-      do (undefine-key *root-map* (kbd k)))
+(defparameter *unwanted-bindings* (list
+                                   (list *root-map*
+                                         "C-a" "C-b" "C-c" "C-e" "C-m")
+                                   (list *group-root-map*
+                                         "C-k" "k" "C-w" "w")
+                                   (list *tile-group-root-map*
+                                         "C-l" "C-n" "C-p" "M-n" "M-p" "C-u" "c" "e" "w" "t" "l")))
 
-(loop for k in
-     '("C-k" "k" "C-w" "w")
-      do (undefine-key *group-root-map* (kbd k)))
+(loop for m in *unwanted-bindings*
+   do (let ((kmap (car m))
+            (keys (cdr m)))
+        (loop for k in keys do
+             (undefine-key kmap (kbd k)))))
 
-(loop for k in
-     '("C-l" "C-n" "C-p" "C-u" "c" "e" "w" "t" "l")
-      do (undefine-key *tile-group-root-map* (kbd k)))
+;; Wallpaper from Pictures
+(defparameter *pictures* "/home/jason/Pictures/*.jpg")
+
+(defun pictures () (directory *pictures*))
+
+(defcommand random-wallpaper () ()
+  (run-shell-command
+   (concatenate 'string "feh --bg-fill "
+                (namestring
+                 (alexandria:random-elt (pictures))))))
 
 ;; App commands
 (defcommand chromium () ()
@@ -89,6 +102,7 @@ to list all available commands.
                          `("w"    "chromium")
                          `("t"    "terminal")
                          `("l"    "loadrc")
+                         `("C-w"  "random-wallpaper")
                          `("C-m"  "mode-line")
                          `("C-r"  "restart-hard")
                          `("C-q"  "quit"))
@@ -102,5 +116,5 @@ to list all available commands.
 ;; Set the default mouse cursor
 (run-shell-command "xsetroot -cursor_name left_ptr -solid black -name root-window")
 
-;; Set the background image (requires feh)
-(run-shell-command "feh --bg-fill /home/jason/.stumpwm.d/desktop.jpg")
+;; Select a random wallpaper from *pictures* (~/Pictures)
+(random-wallpaper)
